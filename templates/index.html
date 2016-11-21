@@ -1,0 +1,149 @@
+{% block head %}
+<title>ToDolst</title>
+<link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/materialize.css') }}" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+    label {
+        color: #000 !important;
+    }
+</style>
+{% endblock %}
+
+{% block body%}
+<div class="navbar-fixed">
+<nav class="light-blue lighten-1" role="navigation">
+    <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">TooDoo</a>
+      <ul class="right hide-on-med-and-down">
+        <li><a href="#">设置</a></li>
+        <li><a href="#">联系</a></li>
+        <li><a href="#">关于</a></li>
+      <li><a class="waves-effect waves-light btn red">登录/注册</a></li>
+
+      </ul>
+
+      <ul id="nav-mobile" class="side-nav">
+        <li><a href="#">设置</a></li>
+        <li><a href="#">联系</a></li>
+        <li><a href="#">关于</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+    </div>
+  </nav>
+</div>
+
+<div class="container">
+
+    <div class="row">
+        <div class="input-field col s12 m8 offset-m3">
+            <form id="add-form" action="{{ url_for('new_item') }}" method="POST">
+            <input placeholder="What to do next?" name="body"  id="first_name" type="text" class="validate">
+            <a class="waves-effect waves-light btn right" href="#" onclick="document.getElementById('add-form').submit()"><i class="material-icons right">add</i>添加</a>
+            </form>
+        </div>
+        </div>
+
+
+    <div class="row">
+        <div class="col s12 m2 offset-m1">
+            <a class="waves-effect waves-light btn blue"><i class="material-icons left">email</i>收件箱</a>
+            <br><br>
+            <a class="waves-effect waves-light btn green"><i class="material-icons left">done</i>已完成</a>
+            <br><br>
+            <h5 class="">项目</h5>
+            <div class="collection">
+                <a href="#!" class="collection-item"><span class="badge">1</span>生活</a>
+                <a href="#!" class="collection-item"><span class="badge">4</span>学习</a>
+                <a href="#!" class="collection-item"><span class="badge">54</span>运动</a>
+                <a href="#!" class="collection-item"><span class="badge">14</span>发呆</a>
+            </div>
+        </div>
+
+        <div class="col s12 m8">
+        {% for item in items %}
+            <p class="card-panel hoverable" id="item{{loop.index}}">
+              <input type="checkbox" id="item-done{{loop.index}}" onclick='window.location.assign("/delete-item/{{item.id}}")'/>
+              <label for="item-done{{ loop.index }}">{{ item.body }}</label>
+                <a class="right" href="{{ url_for('del_item', id=item.id) }}"><i class="material-icons left">delete</i></a>
+                <a class="edit-btn right" id="{{loop.index}}" href="#"><i class="material-icons left">mode_edit</i></a>
+            </p>
+            <form class="card-panel edit-form" id="form{{loop.index}}" action="{{ url_for('edit_item', id=item.id) }}" method="POST" style="display:none">
+            <input placeholder="What to do next?" name="body" type="text" class="validate" value="{{ item.body }}">
+            <a class="waves-effect waves-light btn" href="#" onclick="document.getElementById('form{{loop.index}}').submit()"><i class="material-icons right">add</i>确定</a>
+            <a class="waves-effect waves-light btn cancel-btn" href="#">取消</a>
+            </form>
+        {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+    <div class="fixed-action-btn horizontal">
+    <a class="btn-floating btn-large red">
+      <i class="large material-icons">info_outline</i>
+    </a>
+    <ul>
+      <li><a class="btn-floating red"><i class="material-icons">insert_chart</i></a></li>
+      <li><a class="btn-floating yellow darken-1"><i class="material-icons">format_quote</i></a></li>
+      <li><a class="btn-floating green"><i class="material-icons">publish</i></a></li>
+      <li><a class="btn-floating blue"><i class="material-icons">attach_file</i></a></li>
+    </ul>
+  </div>
+
+
+  <footer class="page-footer orange">
+    <div class="container">
+      <div class="row">
+        <div class="col l6 s12">
+          <h5 class="white-text">Company Bio</h5>
+          <p class="grey-text text-lighten-4">We are a team of college students working on this project like it's our full time job. Any amount would help support and continue development on this project and is greatly appreciated.</p>
+
+
+        </div>
+        <div class="col l3 s12">
+          <h5 class="white-text">Settings</h5>
+          <ul>
+            <li><a class="white-text" href="#!">Link 1</a></li>
+            <li><a class="white-text" href="#!">Link 2</a></li>
+            <li><a class="white-text" href="#!">Link 3</a></li>
+            <li><a class="white-text" href="#!">Link 4</a></li>
+          </ul>
+        </div>
+        <div class="col l3 s12">
+          <h5 class="white-text">Connect</h5>
+          <ul>
+            <li><a class="white-text" href="#!">Link 1</a></li>
+            <li><a class="white-text" href="#!">Link 2</a></li>
+            <li><a class="white-text" href="#!">Link 3</a></li>
+            <li><a class="white-text" href="#!">Link 4</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <div class="container">
+      Made by <a class="orange-text text-lighten-3" href="http://materializecss.com">Materialize</a>
+      </div>
+    </div>
+  </footer>
+
+
+
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/materialize.js') }}"></script>
+<script>
+    $(".edit-btn").on('click', function () {
+      var itemId = this.id;
+      $("#item" + itemId).hide();
+      $("#form" + itemId).show();
+      $(".cancel-btn").click(function() {
+          $("#form" + itemId).hide();
+          $("#item" + itemId).show();
+      });
+    });
+</script>
+{% endblock %}
