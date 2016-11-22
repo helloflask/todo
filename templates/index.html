@@ -7,6 +7,10 @@
     label {
         color: #000 !important;
     }
+
+    .move {
+        cursor: move;
+    }
 </style>
 {% endblock %}
 
@@ -36,15 +40,20 @@
 
     <div class="row">
         <div class="input-field col s12 m8 offset-m3">
-            <form id="add-form" action="{{ url_for('new_item') }}" method="POST">
-            <input placeholder="What to do next?" name="body"  id="first_name" type="text" class="validate">
-            <a class="waves-effect waves-light btn right" href="#" onclick="document.getElementById('add-form').submit()"><i class="material-icons right">add</i>添加</a>
+            <form id="add-form" method="POST">
+                {{ form.hidden_tag() }}
+                <div class="validate col s12 m2">
+                    {{ form.category() }} <!--label>选择项目</label-->
+                </div>
+                {{ form.body(class="validate col s12 m7", placeholder="What to do next?") }}&nbsp;&nbsp;
+                {#{ form.submit(class="waves-effect waves-light btn") }#}
+                <a class="waves-effect waves-light btn" href="#" onclick="document.getElementById('add-form').submit()"><i class="material-icons right">add</i>添加</a>
             </form>
         </div>
-        </div>
+    </div>
 
 
-    <div class="row">
+    <div class="row fixed">
         <div class="col s12 m2 offset-m1">
             <a class="waves-effect waves-light btn blue"><i class="material-icons left">email</i>收件箱</a>
             <br><br>
@@ -52,31 +61,34 @@
             <br><br>
             <h5 class="">项目</h5>
             <div class="collection">
-                <a href="#!" class="collection-item"><span class="badge">1</span>生活</a>
-                <a href="#!" class="collection-item"><span class="badge">4</span>学习</a>
-                <a href="#!" class="collection-item"><span class="badge">54</span>运动</a>
-                <a href="#!" class="collection-item"><span class="badge">14</span>发呆</a>
+                {% for category in categories%}
+                <a href="#!" class="collection-item"><span class="badge">14</span><i class="material-icons left">list</i>{{ category.name }}</a>
+                {% endfor %}
             </div>
+            <form id="add-category-form" action="{{ url_for('new_category') }}" method="POST">
+                <input class="validate" placeholder="新分类？" name="name" id="add-category" type="text">
+                <a class="waves-effect waves-light btn-small right" href="#" onclick="document.getElementById('add-category-form').submit()"><i class="material-icons right">add</i>添加</a>
+            </form>
         </div>
 
-        <div class="col s12 m8">
+        <div class="col s12 m8 items">
         {% for item in items %}
             <p class="card-panel hoverable" id="item{{loop.index}}">
-              <input type="checkbox" id="item-done{{loop.index}}" onclick='window.location.assign("/delete-item/{{item.id}}")'/>
-              <label for="item-done{{ loop.index }}">{{ item.body }}</label>
+                <input type="checkbox" id="item-done{{loop.index}}" onclick='window.location.assign("/delete-item/{{item.id}}")'/>
+                <label for="item-done{{loop.index}}">{{ item.body }}</label>
+                <a class="move right"><i class="material-icons">view_headline</i></a>
                 <a class="right" href="{{ url_for('del_item', id=item.id) }}"><i class="material-icons left">delete</i></a>
-                <a class="edit-btn right" id="{{loop.index}}" href="#"><i class="material-icons left">mode_edit</i></a>
+                <a class="edit-btn right" id="{{loop.index}}" href="#!"><i class="material-icons left">mode_edit</i></a>
             </p>
             <form class="card-panel edit-form" id="form{{loop.index}}" action="{{ url_for('edit_item', id=item.id) }}" method="POST" style="display:none">
-            <input placeholder="What to do next?" name="body" type="text" class="validate" value="{{ item.body }}">
-            <a class="waves-effect waves-light btn" href="#" onclick="document.getElementById('form{{loop.index}}').submit()"><i class="material-icons right">add</i>确定</a>
-            <a class="waves-effect waves-light btn cancel-btn" href="#">取消</a>
+                <input placeholder="What to do next?" name="body" type="text" class="validate" value="{{ item.body }}">
+                <a class="waves-effect waves-light btn" href="#" onclick="document.getElementById('form{{loop.index}}').submit()"><i class="material-icons right">add</i>确定</a>
+                <a class="waves-effect waves-light btn cancel-btn" href="#!">取消</a>
             </form>
         {% endfor %}
         </div>
     </div>
 </div>
-
 
     <div class="fixed-action-btn horizontal">
     <a class="btn-floating btn-large red">
@@ -105,8 +117,6 @@
           <ul>
             <li><a class="white-text" href="#!">Link 1</a></li>
             <li><a class="white-text" href="#!">Link 2</a></li>
-            <li><a class="white-text" href="#!">Link 3</a></li>
-            <li><a class="white-text" href="#!">Link 4</a></li>
           </ul>
         </div>
         <div class="col l3 s12">
@@ -114,8 +124,6 @@
           <ul>
             <li><a class="white-text" href="#!">Link 1</a></li>
             <li><a class="white-text" href="#!">Link 2</a></li>
-            <li><a class="white-text" href="#!">Link 3</a></li>
-            <li><a class="white-text" href="#!">Link 4</a></li>
           </ul>
         </div>
       </div>
@@ -133,17 +141,26 @@
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-2.1.1.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/materialize.js') }}"></script>
+<script src="{{ url_for('static', filename='jquery-ui-1.12.1/jquery-ui.min.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('static', filename='/js/core.js') }}" type="text/javascript"></script>
+<script type=text/javascript>
+  $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
 <script>
-    $(".edit-btn").on('click', function () {
-      var itemId = this.id;
-      $("#item" + itemId).hide();
-      $("#form" + itemId).show();
-      $(".cancel-btn").click(function() {
-          $("#form" + itemId).hide();
-          $("#item" + itemId).show();
-      });
+    $(document).ready(function() {
+        $(".edit-btn").on('click', function () {
+          var itemId = this.id;
+          $("#item" + itemId).hide();
+          $("#form" + itemId).show();
+          $(".cancel-btn").click(function() {
+              $("#form" + itemId).hide();
+              $("#item" + itemId).show();
+          });
+        });
+        $('.items').sortable({ handle: '.move' });
+        $('select').material_select();
     });
 </script>
 {% endblock %}

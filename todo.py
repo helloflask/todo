@@ -5,6 +5,9 @@ import datetime
 from flask import Flask, render_template, redirect, flash, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_script import Manager
+from flask_wtf import Form
+from wtforms import StringField, SubmitField, SelectField
+from wtforms.validators import DataRequired
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
@@ -12,6 +15,8 @@ app.config['SECRET_KEY'] = 'a secret string'
 app.config['SQLALCHEMY_DATABASE_URI'] = \
     'sqlite:///' + os.path.join(basedir, 'data.sqlite')  # in linux the address is: sqlite:////...
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
+app.config['DEBUG'] = True
+# app.config['TEMPLATES_AUTO_RELOAD'] = True  # auto reload page
 
 manager = Manager(app)
 db = SQLAlchemy(app)
@@ -22,6 +27,7 @@ class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
     location = db.Column(db.Integer, unique=True)
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
     #timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
 
@@ -30,22 +36,34 @@ class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
     location = db.Column(db.Integer, unique=True)
+    items = db.relationship('Item', backref='category', lazy='dynamic')
     #timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
 
-@app.route('/')
+class NewItemForm(Form):
+    categories = Category.query.all()
+    body = StringField(validators=[DataRequired()])
+    category = SelectField(choices=[(category.id, category.name) for category in categories])
+    submit = SubmitField(u'添加')
+
+@app.route('/', methods=['GET', 'POST'])
 def index():
+    form = NewItemForm()
+    if form.validate_on_submit():
+        body = form.body.data
+        category = Category.query.get_or_404(int(form.category.data))
+        item = Item(body=body, category=category)
+        db.session.add(item)
+        db.session.commit()
     items = Item.query.all()
-    return render_template('index.html', items=items)
+    categories = Category.query.all()
+    return render_template('index.html', items=items, categories=categories, form=form)
 
 
-@app.route('/new-item', methods=['GET', 'POST'])
-def new_item():
-    body = request.form.get('body')
-    #category = request.form.get('category', 'inbox')
-    item = Item(body=body)#, category=category)
-    db.session.add(item)
-    return redirect(url_for('index'))
+@app.route('/category/<int:id>')
+def category(id):
+    category = Category.query.get_or_404(id)
+    return render_template('index.html', category=category)
 
 
 @app.route('/new-category', methods=['GET', 'POST'])
