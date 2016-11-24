@@ -69,9 +69,10 @@ def new_category():
 @app.route('/edit-item/<int:id>', methods=['GET', 'POST'])
 def edit_item(id):
     item = Item.query.get_or_404(id)
+    category = item.category
     item.body = request.form.get('body')
     db.session.add(item)
-    return redirect(url_for('index'))
+    return redirect(url_for('category', id=category.id))
 
 
 @app.route('/edit-category/<int:id>', methods=['GET', 'POST'])
@@ -79,7 +80,7 @@ def edit_category(id):
     category = Category.query.get_or_404(id)
     category.name = request.form.get('name')
     db.session.add(category)
-    return redirect(url_for('index'))
+    return redirect(url_for('category', id=category.id))
 
 
 @app.route('/done/<int:id>', methods=['GET', 'POST'])
