@@ -15,6 +15,7 @@ app.config['SECRET_KEY'] = 'a secret string'
 # the database address below is for heroku postgres, if you want test it on local, use above address instead.
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 # app.config['DEBUG'] = True
 manager = Manager(app)
 db = SQLAlchemy(app)

@@ -106,7 +106,7 @@
                 </p>
                 <form class="card-panel edit-form" id="form{{loop.index}}" action="{{ url_for('edit_item', id=item.id) }}" method="POST">
                     <input placeholder="What to do next?" name="body" type="text" class="validate" value="{{ item.body }}">
-                    <a class="waves-effect waves-light btn" href="#!" onclick="document.getElementById('form{{loop.index}}').submit()">确定</a>
+                    <a class="waves-effect waves-light btn confirm-btn" href="#!" onclick="document.getElementById('form{{loop.index}}').submit()">确定</a>
                     <a class="waves-effect waves-light btn cancel-btn" href="#!">取消</a>
                 </form>
             </div>

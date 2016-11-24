@@ -48,6 +48,10 @@ $(document).ready(function() {
         }, function() {$(this).find(".delete-category").hide()
     });
 
+    $(".confirm-btn").click(function() {
+        Materialize.toast('修改成功~', 3000, 'rounded')
+    });
+
     $(".delete-item").click(function() {
         Materialize.toast('删除成功~', 3000, 'rounded')
     });
