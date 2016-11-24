@@ -13,7 +13,6 @@ $(document).ready(function() {
     // $('.items').sortable({ handle: '.move' });
     $('select').material_select();
     $(".button-collapse").sideNav();
-    $('.collapsible').collapsible();
 
     // add new item
     $("#new-item").click(function() {

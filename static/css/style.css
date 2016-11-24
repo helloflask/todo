@@ -3,10 +3,14 @@ body {
 }
 
 footer a:hover {
-    border-bottom: 1px solid black !important;
+    border-bottom: 1px solid black;
 }
 .edit-form {
     display: none;
+}
+
+.collection-item {
+    border-bottom: 1px solid #d5d5d5 !important;
 }
 
 .category-name {

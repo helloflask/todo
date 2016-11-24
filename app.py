@@ -9,9 +9,13 @@ from flask_script import Manager
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a secret string'
+# app.config['SQLALCHEMY_DATABASE_URI'] = \
+#    'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+
+# the database address below is for heroku postgres, if you want test it on local, use above address instead.
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
-
+# app.config['DEBUG'] = True
 manager = Manager(app)
 db = SQLAlchemy(app)
 
@@ -34,13 +38,6 @@ class Category(db.Model):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    if Category.query.filter_by(id=1) is None:
-        inbox = Category(name=u'收件箱', id=1)
-        done = Category(name=u'已完成', id=2)
-        db.session.add(inbox)
-        db.session.add(done)
-        db.session.commit()
-
     if request.method == 'POST':
         body = request.form.get('item')
         id = request.form.get('category')

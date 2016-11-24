@@ -1,7 +1,7 @@
 {% block head %}
 <title>Task5</title>
 <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<link href="{{ url_for('static', filename='css/materialize.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/materialize.min.css') }}" rel="stylesheet">
 <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -69,14 +69,14 @@
                 <br><br>
             </div>
             <div class="row">
-                <div class="collection col s12 m12 l8 right">
-                    {% for category in categories[2:] %}
-                    <span class="categories">{{categories.length}}
-                    <a href="{{ url_for('del_category', id=category.id) }}" class="right delete-category">x</a>
-                    <a href="{{ url_for('category', id=category.id) }}" class="collection-item"><span class="badge">{{ category.items.count() }}</span>{{ category.name }}</a>
-                    </span>
-                    {% endfor %}
-                </div>
+                    <div class="collection col s12 m12 l8 right">
+                        {% for category in categories[2:] %}
+                        <span class="categories">
+                        <a href="{{ url_for('del_category', id=category.id) }}" class="right delete-category" title="delete it?">x</a>
+                        <a href="{{ url_for('category', id=category.id) }}" class="collection-item"><span class="badge">{{ category.items.count() }}</span>{{ category.name }}</a>
+                        </span>
+                        {% endfor %}
+                    </div>
             </div>
             <div class="row">
             <div class="col s6 m8 l6 right" >
@@ -97,11 +97,11 @@
                     <a><i class="material-icons left">done</i></a>
                     <span><del>{{ item.body }}</del></span>
                     {% else %}
-                    <a class="item-done right" href="{{ url_for('done', id=item.id) }}"><i class="material-icons left">done</i></a>
+                    <a class="item-done right" href="{{ url_for('done', id=item.id) }}" title="done?"><i class="material-icons left">done</i></a>
                     <span>{{ item.body }}</span>
                     {% endif %}
                     <!--a class="move right"><i class="material-icons">view_headline</i></a-->
-                    <a class="right delete-item" href="{{ url_for('del_item', id=item.id) }}"><i class="material-icons left">delete</i></a>
+                    <a class="right delete-item" href="{{ url_for('del_item', id=item.id) }}" title="delete it?"><i class="material-icons left">delete</i></a>
                     <a class="edit-btn right" id="{{loop.index}}" href="#!"><i class="material-icons left">mode_edit</i></a>
                 </p>
                 <form class="card-panel edit-form" id="form{{loop.index}}" action="{{ url_for('edit_item', id=item.id) }}" method="POST">
@@ -120,7 +120,7 @@
         <div class="row">
             <div class="col m4 l4 s12 offset-m2 offset-l2">
                   <h5 class="white-text">Task5</h5>
-                  <p class="grey-text text-lighten-4">这是一个用Flask和JavaScript实现的待办事项应用（To-Do List），作为知乎专栏Hello, Flask!的实践项目。如果要了解更多的信息，请点击右侧的链接。另外，这是一个开源项目，欢迎fork~</p>
+                  <p class="white-text">这是一个用Flask和JavaScript实现的待办事项应用（To-Do List），作为知乎专栏Hello, Flask!的实践项目。如果要了解更多的信息，请点击右侧的链接。另外，这是一个开源项目，欢迎fork~</p>
             </div>
             <div class="col m4 l4 s12 offset-m2 offset-l2">
                 <h5 class="white-text">Links</h5>
