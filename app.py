@@ -1,21 +1,20 @@
 # -*- coding: utf-8 -*-
 import os
+import psycopg2
 
-from flask import Flask, render_template, redirect, url_for, request, flash
+from flask import Flask, render_template, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_script import Manager
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a secret string'
-app.config['SQLALCHEMY_DATABASE_URI'] = \
-    'sqlite:///' + os.path.join(basedir, 'data.sqlite')  # in linux the address is: sqlite:////...
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
-app.config['DEBUG'] = True
-# app.config['TEMPLATES_AUTO_RELOAD'] = True  # auto reload page
 
 manager = Manager(app)
 db = SQLAlchemy(app)
+
 
 class Item(db.Model):
     __tablename__ = 'items'
@@ -57,7 +56,8 @@ def category(id):
     category = Category.query.get_or_404(id)
     categories = Category.query.all()
     items = category.items
-    return render_template('index.html', items=items, categories=categories, category_now=category)
+    return render_template('index.html', items=items,
+                           categories=categories, category_now=category)
 
 
 @app.route('/new-category', methods=['GET', 'POST'])
@@ -65,7 +65,7 @@ def new_category():
     name = request.form.get('name')
     category = Category(name=name)
     db.session.add(category)
-    db.session.commit()  # commit后使下面的category.id获得有效值
+    db.session.commit()
     return redirect(url_for('category', id=category.id))
 
 
