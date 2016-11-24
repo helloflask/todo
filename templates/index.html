@@ -1,166 +1,149 @@
 {% block head %}
-<title>ToDolst</title>
+<title>Task5</title>
 <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <link href="{{ url_for('static', filename='css/materialize.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<style>
-    label {
-        color: #000 !important;
-    }
-
-    .move {
-        cursor: move;
-    }
-</style>
 {% endblock %}
 
 {% block body%}
-<div class="navbar-fixed">
-<nav class="light-blue lighten-1" role="navigation">
-    <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">TooDoo</a>
-      <ul class="right hide-on-med-and-down">
-        <li><a href="#">设置</a></li>
-        <li><a href="#">联系</a></li>
-        <li><a href="#">关于</a></li>
-      <li><a class="waves-effect waves-light btn red">登录/注册</a></li>
+<div class="navbar">
+    <nav class="light-blue lighten-1" role="navigation">
+        <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Task5</a>
+            <ul class="right hide-on-med-and-down">
+                <li><a href="https://zhuanlan.zhihu.com/flask" target="_blank">Hello, Flask!</a></li>
+                <li><a href="http://withlihui.com" target="_blank">Blog</a></li>
+                <li><a href="https://github.com/helloflask/todo" target="_blank">Github</a></li>
+                <li><a class="waves-effect waves-light btn red signin">登录/注册</a></li>
+            </ul>
 
-      </ul>
-
-      <ul id="nav-mobile" class="side-nav">
-        <li><a href="#">设置</a></li>
-        <li><a href="#">联系</a></li>
-        <li><a href="#">关于</a></li>
-      </ul>
-      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
-    </div>
-  </nav>
+            <ul id="nav-mobile" class="side-nav">
+                <li><a href="{{ url_for('category', id=1) }}">收件箱</a></li>
+                <li><a href="{{ url_for('category', id=2) }}">已完成</a></li>
+                <li><a href="https://zhuanlan.zhihu.com/flask" target="_blank">Hello, Flask!</a></li>
+                <li><a href="http://withlihui.com" target="_blank">Blog</a></li>
+                <li><a href="https://github.com/helloflask/todo" target="_blank">Github</a></li>
+                <li><a class="waves-effect waves-light btn red signin">登录/注册</a></li>
+            </ul>
+            <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+        </div>
+    </nav>
 </div>
 
-<div class="container">
+<span class="hide" id="category-count">{{categories|length}}</span>
+<span class="hide" id="items-count">{{items.count()}}</span>
+
+<div class="container"><br>
+    <div class="row">
+        <form class="col s12 m10 l8 offset-m2 offset-l2" id="add-item-form" action="{{ url_for('index') }}" method="POST">
+            <div class="row">
+                <div class="input-field col s4 m4">
+                    <select id="category-select" name="category">
+                        {% if category_now.id == 2 %}
+                        <option value="" selected disabled>选择分类</option>
+                        {% else %}
+                        <option value="{{ category_now.id }}" selected>{{ category_now.name }}</option>
+                        {% endif %}
+                        {% for category in categories %}
+                            {% if category != category_now and category.id != 2 %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endif %}
+                        {% endfor%}
+                    </select>
+                </div>
+                <div class="input-field col s8 m8">
+                    <input class="validate" id="item-input" type="text" name="item" placeholder="去超市买两个苹果~">
+                    <a class="waves-effect waves-light btn input-field right" id="new-item" href="#"><i class="material-icons right">add</i>OK</a>
+                </div><br>
+            </div>
+        </form>
+    </div>
 
     <div class="row">
-        <div class="input-field col s12 m8 offset-m3">
-            <form id="add-form" method="POST">
-                {{ form.hidden_tag() }}
-                <div class="validate col s12 m2">
-                    {{ form.category() }} <!--label>选择项目</label-->
-                </div>
-                {{ form.body(class="validate col s12 m7", placeholder="What to do next?") }}&nbsp;&nbsp;
-                {#{ form.submit(class="waves-effect waves-light btn") }#}
-                <a class="waves-effect waves-light btn" href="#" onclick="document.getElementById('add-form').submit()"><i class="material-icons right">add</i>添加</a>
-            </form>
-        </div>
-    </div>
-
-
-    <div class="row fixed">
-        <div class="col s12 m2 offset-m1">
-            <a class="waves-effect waves-light btn blue"><i class="material-icons left">email</i>收件箱</a>
-            <br><br>
-            <a class="waves-effect waves-light btn green"><i class="material-icons left">done</i>已完成</a>
-            <br><br>
-            <h5 class="">项目</h5>
-            <div class="collection">
-                {% for category in categories%}
-                <a href="#!" class="collection-item"><span class="badge">14</span><i class="material-icons left">list</i>{{ category.name }}</a>
-                {% endfor %}
+        <div class="col s12 m4 l4">
+            <div class="right-align nav-button">
+                <a class="waves-effect waves-light btn blue center-align" href="{{ url_for('category', id=1) }}"><i class="material-icons left">email</i>收件箱 {{ categories[0].items.count() }}</a>
+                <br><br>
+                <a class="waves-effect waves-light btn green center-align" href="{{ url_for('category', id=2) }}"><i class="material-icons left">done</i>已完成 {{ categories[1].items.count() }}</a>
+                <br><br>
             </div>
-            <form id="add-category-form" action="{{ url_for('new_category') }}" method="POST">
-                <input class="validate" placeholder="新分类？" name="name" id="add-category" type="text">
-                <a class="waves-effect waves-light btn-small right" href="#" onclick="document.getElementById('add-category-form').submit()"><i class="material-icons right">add</i>添加</a>
-            </form>
+            <div class="row">
+                <div class="collection col s12 m12 l8 right">
+                    {% for category in categories[2:] %}
+                    <span class="categories">{{categories.length}}
+                    <a href="{{ url_for('del_category', id=category.id) }}" class="right delete-category">x</a>
+                    <a href="{{ url_for('category', id=category.id) }}" class="collection-item"><span class="badge">{{ category.items.count() }}</span>{{ category.name }}</a>
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="row">
+            <div class="col s6 m8 l6 right" >
+                <form id="add-category-form" action="{{ url_for('new_category') }}" method="POST">
+                    <input class="validate" placeholder="新分类？" name="name" id="category-input" type="text">
+                    <a class="waves-effect waves-light btn small right" id="new-category" href="#!">添加</a>
+                </form>
+            </div>
+                </div>
         </div>
 
-        <div class="col s12 m8 items">
-        {% for item in items %}
-            <p class="card-panel hoverable" id="item{{loop.index}}">
-                <input type="checkbox" id="item-done{{loop.index}}" onclick='window.location.assign("/delete-item/{{item.id}}")'/>
-                <label for="item-done{{loop.index}}">{{ item.body }}</label>
-                <a class="move right"><i class="material-icons">view_headline</i></a>
-                <a class="right" href="{{ url_for('del_item', id=item.id) }}"><i class="material-icons left">delete</i></a>
-                <a class="edit-btn right" id="{{loop.index}}" href="#!"><i class="material-icons left">mode_edit</i></a>
-            </p>
-            <form class="card-panel edit-form" id="form{{loop.index}}" action="{{ url_for('edit_item', id=item.id) }}" method="POST" style="display:none">
-                <input placeholder="What to do next?" name="body" type="text" class="validate" value="{{ item.body }}">
-                <a class="waves-effect waves-light btn" href="#" onclick="document.getElementById('form{{loop.index}}').submit()"><i class="material-icons right">add</i>确定</a>
-                <a class="waves-effect waves-light btn cancel-btn" href="#!">取消</a>
-            </form>
-        {% endfor %}
+        <div class="col s12 m8 l6 items">
+           <span class="category-name">{{ category_now.name }}</span>
+            {% for item in items %}
+            <div>
+                <p class="card-panel hoverable" id="item{{loop.index}}">
+                    {% if item.category.id == 2 %}
+                    <a><i class="material-icons left">done</i></a>
+                    <span><del>{{ item.body }}</del></span>
+                    {% else %}
+                    <a class="item-done right" href="{{ url_for('done', id=item.id) }}"><i class="material-icons left">done</i></a>
+                    <span>{{ item.body }}</span>
+                    {% endif %}
+                    <!--a class="move right"><i class="material-icons">view_headline</i></a-->
+                    <a class="right delete-item" href="{{ url_for('del_item', id=item.id) }}"><i class="material-icons left">delete</i></a>
+                    <a class="edit-btn right" id="{{loop.index}}" href="#!"><i class="material-icons left">mode_edit</i></a>
+                </p>
+                <form class="card-panel edit-form" id="form{{loop.index}}" action="{{ url_for('edit_item', id=item.id) }}" method="POST">
+                    <input placeholder="What to do next?" name="body" type="text" class="validate" value="{{ item.body }}">
+                    <a class="waves-effect waves-light btn" href="#!" onclick="document.getElementById('form{{loop.index}}').submit()">确定</a>
+                    <a class="waves-effect waves-light btn cancel-btn" href="#!">取消</a>
+                </form>
+            </div>
+            {% endfor %}
         </div>
     </div>
 </div>
 
-    <div class="fixed-action-btn horizontal">
-    <a class="btn-floating btn-large red">
-      <i class="large material-icons">info_outline</i>
-    </a>
-    <ul>
-      <li><a class="btn-floating red"><i class="material-icons">insert_chart</i></a></li>
-      <li><a class="btn-floating yellow darken-1"><i class="material-icons">format_quote</i></a></li>
-      <li><a class="btn-floating green"><i class="material-icons">publish</i></a></li>
-      <li><a class="btn-floating blue"><i class="material-icons">attach_file</i></a></li>
-    </ul>
-  </div>
-
-
-  <footer class="page-footer orange">
+<footer class="page-footer orange">
     <div class="container">
-      <div class="row">
-        <div class="col l6 s12">
-          <h5 class="white-text">Company Bio</h5>
-          <p class="grey-text text-lighten-4">We are a team of college students working on this project like it's our full time job. Any amount would help support and continue development on this project and is greatly appreciated.</p>
-
-
+        <div class="row">
+            <div class="col m4 l4 s12 offset-m2 offset-l2">
+                  <h5 class="white-text">Task5</h5>
+                  <p class="grey-text text-lighten-4">这是一个用Flask和JavaScript实现的待办事项应用（To-Do List），作为知乎专栏Hello, Flask!的实践项目。如果要了解更多的信息，请点击右侧的链接。另外，这是一个开源项目，欢迎fork~</p>
+            </div>
+            <div class="col m4 l4 s12 offset-m2 offset-l2">
+                <h5 class="white-text">Links</h5>
+                <ul>
+                    <li class="white-text">Blog - <a class="white-text" href="http://withlihui.com" target="_blank">李辉的书桌</a></li>
+                    <li class="white-text">知乎专栏 - <a class="white-text" href="https://zhuanlan.zhihu.com/flask" target="_blank">Hello, Flask!</a></li>
+                    <li class="white-text">GitHub Project - <a class="white-text" href="https://github.com/helloflask/todo" target="_blank">TooDoo</a></li>
+                    <li class="white-text">Github Organization - <a class="white-text" href="https://github.com/helloflask" target="_blank">Hello, Flask!</a></li>
+              </ul>
+            </div>
         </div>
-        <div class="col l3 s12">
-          <h5 class="white-text">Settings</h5>
-          <ul>
-            <li><a class="white-text" href="#!">Link 1</a></li>
-            <li><a class="white-text" href="#!">Link 2</a></li>
-          </ul>
-        </div>
-        <div class="col l3 s12">
-          <h5 class="white-text">Connect</h5>
-          <ul>
-            <li><a class="white-text" href="#!">Link 1</a></li>
-            <li><a class="white-text" href="#!">Link 2</a></li>
-          </ul>
-        </div>
-      </div>
     </div>
     <div class="footer-copyright">
-      <div class="container">
-      Made by <a class="orange-text text-lighten-3" href="http://materializecss.com">Materialize</a>
-      </div>
+        <div class="container center-align">
+           Made with <span class="red-text">&#10084;</span> and <span class="blue-text">&#9834;</span> by <a class="black-text" href="http://withlihui.com" target="_blank">Grey Li</a>
+        </div>
     </div>
-  </footer>
-
-
-
-
+</footer>
 {% endblock %}
 
 {% block scripts %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-2.1.1.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/materialize.js') }}"></script>
-<script src="{{ url_for('static', filename='jquery-ui-1.12.1/jquery-ui.min.js') }}" type="text/javascript"></script>
-<script src="{{ url_for('static', filename='/js/core.js') }}" type="text/javascript"></script>
-<script type=text/javascript>
-  $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-</script>
-<script>
-    $(document).ready(function() {
-        $(".edit-btn").on('click', function () {
-          var itemId = this.id;
-          $("#item" + itemId).hide();
-          $("#form" + itemId).show();
-          $(".cancel-btn").click(function() {
-              $("#form" + itemId).hide();
-              $("#item" + itemId).show();
-          });
-        });
-        $('.items').sortable({ handle: '.move' });
-        $('select').material_select();
-    });
-</script>
+<!--script src="{{ url_for('static', filename='jquery-ui-1.12.1/jquery-ui.min.js') }}" type="text/javascript"></script-->
+<script src="{{ url_for('static', filename='js/core.js') }}" type="text/javascript"></script>
 {% endblock %}

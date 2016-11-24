@@ -1,0 +1,25 @@
+body {
+    font-family: "Microsoft YaHei", "Open Sans","Helvetica",Arial,sans-serif;
+}
+
+footer a:hover {
+    border-bottom: 1px solid black !important;
+}
+.edit-form {
+    display: none;
+}
+
+.category-name {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.delete-category {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .nav-button {
+        display: none;
+    }
+}

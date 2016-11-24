@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
-import datetime
 
-from flask import Flask, render_template, redirect, flash, url_for, request
+from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_script import Manager
-from flask_wtf import Form
-from wtforms import StringField, SubmitField, SelectField
-from wtforms.validators import DataRequired
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
@@ -21,14 +17,12 @@ app.config['DEBUG'] = True
 manager = Manager(app)
 db = SQLAlchemy(app)
 
-
 class Item(db.Model):
     __tablename__ = 'items'
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
     location = db.Column(db.Integer, unique=True)
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
-    #timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
 
 class Category(db.Model):
@@ -37,33 +31,33 @@ class Category(db.Model):
     name = db.Column(db.String(64))
     location = db.Column(db.Integer, unique=True)
     items = db.relationship('Item', backref='category', lazy='dynamic')
-    #timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
-
-class NewItemForm(Form):
-    categories = Category.query.all()
-    body = StringField(validators=[DataRequired()])
-    category = SelectField(choices=[(category.id, category.name) for category in categories])
-    submit = SubmitField(u'添加')
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    form = NewItemForm()
-    if form.validate_on_submit():
-        body = form.body.data
-        category = Category.query.get_or_404(int(form.category.data))
+    if Category.query.filter_by(id=1) is None:
+        inbox = Category(name=u'收件箱', id=1)
+        done = Category(name=u'已完成', id=2)
+        db.session.add(inbox)
+        db.session.add(done)
+        db.session.commit()
+
+    if request.method == 'POST':
+        body = request.form.get('item')
+        id = request.form.get('category')
+        category = Category.query.get_or_404(id)
         item = Item(body=body, category=category)
         db.session.add(item)
-        db.session.commit()
-    items = Item.query.all()
-    categories = Category.query.all()
-    return render_template('index.html', items=items, categories=categories, form=form)
+        return redirect(url_for('category', id=id))
+    return redirect(url_for('category', id=1))
 
 
-@app.route('/category/<int:id>')
+@app.route('/category/<int:id>', methods=['GET', 'POST'])
 def category(id):
     category = Category.query.get_or_404(id)
-    return render_template('index.html', category=category)
+    categories = Category.query.all()
+    items = category.items
+    return render_template('index.html', items=items, categories=categories, category_now=category)
 
 
 @app.route('/new-category', methods=['GET', 'POST'])
@@ -71,15 +65,14 @@ def new_category():
     name = request.form.get('name')
     category = Category(name=name)
     db.session.add(category)
-    return redirect(url_for('index'))
+    db.session.commit()  # commit后使下面的category.id获得有效值
+    return redirect(url_for('category', id=category.id))
 
 
 @app.route('/edit-item/<int:id>', methods=['GET', 'POST'])
 def edit_item(id):
     item = Item.query.get_or_404(id)
     item.body = request.form.get('body')
-    #item.location = request.form.get['i-location']
-    # item.category = request.form.get('category', item.category)
     db.session.add(item)
     return redirect(url_for('index'))
 
@@ -88,36 +81,41 @@ def edit_item(id):
 def edit_category(id):
     category = Category.query.get_or_404(id)
     category.name = request.form.get('name')
-    #category.location = request.form.get['c-location']
     db.session.add(category)
     return redirect(url_for('index'))
+
+
+@app.route('/done/<int:id>', methods=['GET', 'POST'])
+def done(id):
+    item = Item.query.get_or_404(id)
+    category = item.category
+    done_category = Category.query.get_or_404(2)
+    done_item = Item(body=item.body, category=done_category)
+    db.session.add(done_item)
+    db.session.delete(item)
+    return redirect(url_for('category', id=category.id))
 
 
 @app.route('/delete-item/<int:id>')
 def del_item(id):
     item = Item.query.get_or_404(id)
+    category = item.category
     if item is None:
-        flash(u'无效的操作。', 'warning')
+        return redirect(url_for('category', id=1))
     db.session.delete(item)
     db.session.commit()
-    flash(u'删除成功。', 'success')
-    return redirect(url_for('index'))
+    return redirect(url_for('category', id=category.id))
 
 
 @app.route('/delete-category/<int:id>')
 def del_category(id):
     category = Category.query.get_or_404(id)
-    if category is None:
-        flash(u'无效的操作。', 'warning')
+    if category is None or id in [1, 2]:
+        return redirect(url_for('category', id=1))
     db.session.delete(category)
     db.session.commit()
-    flash(u'删除成功。', 'success')
-    return redirect(url_for('index'))
+    return redirect(url_for('category', id=1))
 
-
-@app.route('/setting')
-def setting():
-    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     manager.run()
