@@ -7,4 +7,5 @@ Flask-WTF==0.13.1
 SQLAlchemy==1.1.4
 gunicorn==18.0
 gevent
+psycopg2
 
