@@ -7,9 +7,9 @@ http://task5.herokuapp.com/
 ![demo](https://raw.githubusercontent.com/helloflask/todo/master/static/demo.png)
 
 ## Extensions
-Flask-Script==2.0.5
-Flask-SQLAlchemy==2.1
-SQLAlchemy==1.1.4
+Flask-Script==2.0.5  
+Flask-SQLAlchemy==2.1  
+SQLAlchemy==1.1.4  
 
 
 ## Installation
