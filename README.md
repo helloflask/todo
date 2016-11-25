@@ -40,7 +40,7 @@ python app.py shell
 >>> db.create_all()
 >>> db.session.commit()
 >>> inbox = Category(name='Inbox')
->>> done = Category(name=u'Done')
+>>> done = Category(name='Done')
 >>> db.session.add(inbox)
 >>> db.session.add(done)
 >>> db.session.commit()
