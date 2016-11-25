@@ -53,6 +53,11 @@ python app.py runserver
 
 Now Go to http://127.0.0.1:5000/
 
+## To do list
+- Drag to index items
+- Edit category
+- Set task's priority
+- Set task's date
 
 ## More details
 关于这个项目的详细介绍：[Flask实践：待办清单](https://zhuanlan.zhihu.com/p/23834410)  
