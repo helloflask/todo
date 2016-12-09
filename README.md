@@ -54,7 +54,7 @@ python app.py runserver
 Now Go to http://127.0.0.1:5000/
 
 ## To do list
-- Drag to index items
+- Drag to sort items
 - Edit category
 - Set task's priority
 - Set task's date
