@@ -72,8 +72,8 @@
                     <div class="collection col s12 m12 l8 right">
                         {% for category in categories[2:] %}
                         <span class="categories">
-                        <a href="{{ url_for('del_category', id=category.id) }}" class="right delete-category" title="delete it?">x</a>
-                        <a href="{{ url_for('category', id=category.id) }}" class="collection-item"><span class="badge">{{ category.items.count() }}</span>{{ category.name }}</a>
+                        <a href="{{ url_for('del_category', id=category.id) }}" class="right delete-category red-text" title="delete it?">x</a>
+                        <a href="{{ url_for('category', id=category.id) }}" class="collection-item {% if category == category_now %}active{% endif %}"><span class="badge {% if category == category_now %}white-text{% endif %}">{{ category.items.count() }}</span>{{ category.name }}</a>
                         </span>
                         {% endfor %}
                     </div>
