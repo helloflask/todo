@@ -22,6 +22,10 @@ footer a:hover {
     display: none;
 }
 
+.move {
+    cursor: move;
+}
+
 @media (max-width: 600px) {
     .nav-button {
         display: none;

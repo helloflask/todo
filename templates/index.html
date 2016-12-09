@@ -1,15 +1,10 @@
 {% block head %}
 <title>Task5</title>
 <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<link href="{{ url_for('static', filename='css/materialize.min.css') }}" rel="stylesheet">
+<link href="//cdn.bootcss.com/materialize/0.97.8/css/materialize.min.css" rel="stylesheet">
 <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<style>
-    .move {
-        cursor: move;
-    }
-</style>
 {% endblock %}
 
 {% block body%}
@@ -18,7 +13,7 @@
         <div class="nav-wrapper container"><a id="logo-container" href="http://task5.herokuapp.com" class="brand-logo">Task5</a>
             <ul class="right hide-on-med-and-down">
                 <li><a href="https://zhuanlan.zhihu.com/flask" target="_blank">Hello, Flask!</a></li>
-                <li><a href="http://withlihui.com" target="_blank">Blog</a></li>
+                <li><a href="http://greyli.com" target="_blank">Blog</a></li>
                 <li><a href="https://github.com/helloflask/todo" target="_blank">Github</a></li>
                 <li><a class="waves-effect waves-light btn red signin">登录/注册</a></li>
             </ul>
@@ -146,8 +141,8 @@
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-2.1.1.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/materialize.min.js') }}"></script>
+<script src="//cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/materialize/0.97.8/js/materialize.min.js"></script>
 <script src="{{ url_for('static', filename='jquery-ui-1.12.1.custom/jquery-ui.min.js') }}" type="text/javascript"></script>
 <script src="{{ url_for('static', filename='js/core.js') }}" type="text/javascript"></script>
 {% endblock %}
