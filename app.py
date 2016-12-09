@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
-# import psycopg2
+import psycopg2
 
 from flask import Flask, render_template, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
@@ -9,14 +9,14 @@ from flask_script import Manager
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a secret string'
-app.config['SQLALCHEMY_DATABASE_URI'] = \
-   'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+# app.config['SQLALCHEMY_DATABASE_URI'] = \
+#   'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 
 # the database address below is for heroku postgres, if you want test it on local, use above address instead.
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-app.config['DEBUG'] = True
+# app.config['DEBUG'] = True
 manager = Manager(app)
 db = SQLAlchemy(app)
 
