@@ -10,7 +10,7 @@ $(document).ready(function() {
       });
     });
 
-    // $('.items').sortable({ handle: '.move' });
+    $('.items').sortable({ handle: '.move' });
     $('select').material_select();
     $(".button-collapse").sideNav();
 
@@ -39,7 +39,10 @@ $(document).ready(function() {
         }
     });
 
+
+
     $(".item-done").click(function() {
+        $(this).parent().slideUp();
         Materialize.toast('Well Done +1', 3000, 'rounded')
     });
 
@@ -53,10 +56,12 @@ $(document).ready(function() {
     });
 
     $(".delete-item").click(function() {
+        $(this).parent().slideUp();
         Materialize.toast('删除成功~', 3000, 'rounded')
     });
 
     $(".delete-category").click(function() {
+        $(this).parent().slideUp();
         Materialize.toast('删除成功~', 3000, 'rounded')
     });
 
