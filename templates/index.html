@@ -100,7 +100,7 @@
                     <a class="item-done left" href="{{ url_for('done', id=item.id) }}" title="done?"><i class="material-icons left">done</i></a>
                     <span>{{ item.body }}</span>
                     {% endif %}
-                    <a class="move right"><i class="material-icons">view_headline</i></a>
+                    <!--a class="move right"><i class="material-icons">view_headline</i></a-->
                     <a class="right delete-item" href="{{ url_for('del_item', id=item.id) }}" title="delete it?"><i class="material-icons left">delete</i></a>
                     <a class="edit-btn right" id="{{loop.index}}" href="#!"><i class="material-icons left">mode_edit</i></a>
                 </p>
@@ -143,6 +143,6 @@
 {% block scripts %}
 <script src="//cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/materialize/0.97.8/js/materialize.min.js"></script>
-<script src="{{ url_for('static', filename='jquery-ui-1.12.1.custom/jquery-ui.min.js') }}" type="text/javascript"></script>
+<!--script src="{{ url_for('static', filename='jquery-ui-1.12.1.custom/jquery-ui.min.js') }}" type="text/javascript"></script-->
 <script src="{{ url_for('static', filename='js/core.js') }}" type="text/javascript"></script>
 {% endblock %}

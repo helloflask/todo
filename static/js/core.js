@@ -10,7 +10,7 @@ $(document).ready(function() {
       });
     });
 
-    $('.items').sortable({ handle: '.move' });
+    //$('.items').sortable({ handle: '.move' });
     $('select').material_select();
     $(".button-collapse").sideNav();
 
@@ -68,7 +68,7 @@ $(document).ready(function() {
     $(".signin").click(function() {
         Materialize.toast('暂未添加用户系统，抱歉~', 3000)
     });
-});
+})
 
 
 
