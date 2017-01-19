@@ -18,7 +18,7 @@ First, clone it from github:
 git clone https://github.com/helloflask/todo.git
 ```
 Change to app directory, use `virtualenv` create and activate virtual enviroment.  
-Then use `pip` to install requirements (you may need delete `gunicorn`, `gevent` and `psycopg2`)：  
+Then use `pip` to install requirements (you may need to delete `gunicorn`, `gevent` and `psycopg2`)：  
 ```
 pip install -r requirements.txt
 ```
