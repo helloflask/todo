@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
-import psycopg2
+import psycopg2  # for heroku deploy
 
 from flask import Flask, render_template, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
