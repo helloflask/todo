@@ -4,6 +4,7 @@ Werkzeug==0.11.11
 Flask-Script==2.0.5
 Flask-SQLAlchemy==2.1
 SQLAlchemy==1.1.4
+# packages below were used for Heroku deploy
 gunicorn==18.0
 gevent
 psycopg2
