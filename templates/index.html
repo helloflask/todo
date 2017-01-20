@@ -53,7 +53,8 @@
                     </select>
                 </div>
                 <div class="input-field col s8 m8">
-                    <input class="validate" id="item-input" type="text" name="item" placeholder="去超市买两个苹果~">
+                    <input class="validate" id="item-input" type="text" name="item" placeholder="去超市买两个苹果~"
+                    onkeydown="if (event.keyCode == 13) document.getElementById('new-item').click()">
                     <a class="waves-effect waves-light btn input-field right" id="new-item" href="#"><i class="material-icons right">add</i>OK</a>
                 </div><br>
             </div>
