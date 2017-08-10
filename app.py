@@ -1,55 +1,67 @@
 # -*- coding: utf-8 -*-
-import os
-import psycopg2  # for heroku deploy
+#import psycopg2  # for heroku deploy
 
 from flask import Flask, render_template, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
-from flask_script import Manager
 
-basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a secret string'
-# app.config['SQLALCHEMY_DATABASE_URI'] = \
-#   'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'  # use in-memory datebase
 
 # the database address below is for heroku postgres, if you want test it on local, use above address instead.
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
-app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+#app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # app.config['DEBUG'] = True
-manager = Manager(app)
 db = SQLAlchemy(app)
 
 
 class Item(db.Model):
-    __tablename__ = 'items'
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
-    location = db.Column(db.Integer, unique=True)
-    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), default=1)
 
 
 class Category(db.Model):
-    __tablename__ = 'categories'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
-    location = db.Column(db.Integer, unique=True)
-    items = db.relationship('Item', backref='category', lazy='dynamic')
+    items = db.relationship('Item', backref='category')
+
+
+@app.before_first_request
+def init_db():
+    """Insert default categories and demo items.
+    """
+    db.create_all()
+    inbox = Category(name=u'收件箱')
+    done = Category(name=u'已完成')
+    shopping_list = Category(name=u'购物清单')
+    work = Category(name=u'工作')
+    item = Item(body=u'看一小时《战争与和平》')
+    item2 = Item(body=u'晒太阳')
+    item3 = Item(body=u'写作练习30分钟')
+    item4 = Item(body=u'3瓶牛奶', category=shopping_list)
+    item5 = Item(body=u'5个苹果', category=shopping_list)
+    item6 = Item(body=u'12支铅笔', category=shopping_list)
+    item7 = Item(body=u'浇花', category=done)
+    item8 = Item(body=u'完成demo', category=work)
+    db.session.add_all([inbox, done, item, item2, item3, item4, item5, item6, item7, item8])
+    db.session.commit()
 
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         body = request.form.get('item')
-        id = request.form.get('category')
-        category = Category.query.get_or_404(id)
+        category_id = request.form.get('category')
+        category = Category.query.get_or_404(category_id)
         item = Item(body=body, category=category)
         db.session.add(item)
-        return redirect(url_for('category', id=id))
+        db.session.commit()
+        return redirect(url_for('category', id=category_id))
     return redirect(url_for('category', id=1))
 
 
-@app.route('/category/<int:id>', methods=['GET', 'POST'])
+@app.route('/category/<int:id>')
 def category(id):
     category = Category.query.get_or_404(id)
     categories = Category.query.all()
@@ -73,6 +85,7 @@ def edit_item(id):
     category = item.category
     item.body = request.form.get('body')
     db.session.add(item)
+    db.session.commit()
     return redirect(url_for('category', id=category.id))
 
 
@@ -81,6 +94,7 @@ def edit_category(id):
     category = Category.query.get_or_404(id)
     category.name = request.form.get('name')
     db.session.add(category)
+    db.session.commit()
     return redirect(url_for('category', id=category.id))
 
 
@@ -92,6 +106,7 @@ def done(id):
     done_item = Item(body=item.body, category=done_category)
     db.session.add(done_item)
     db.session.delete(item)
+    db.session.commit()
     return redirect(url_for('category', id=category.id))
 
 
@@ -117,4 +132,4 @@ def del_category(id):
 
 
 if __name__ == '__main__':
-    manager.run()
+    app.run()

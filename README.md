@@ -6,8 +6,7 @@ http://task5.herokuapp.com/
 
 ![demo](https://raw.githubusercontent.com/helloflask/todo/master/static/demo.png)
 
-## Extensions
-Flask-Script==2.0.5  
+## Dependency
 Flask-SQLAlchemy==2.1  
 SQLAlchemy==1.1.4  
 
@@ -18,37 +17,25 @@ First, clone it from github:
 git clone https://github.com/helloflask/todo.git
 ```
 Change to app directory, use `virtualenv` create and activate virtual enviroment.  
-Then use `pip` to install requirements (you may need to delete `gunicorn`, `gevent` and `psycopg2`)：  
+Then use `pip` to install requirements (you may need to comment out `gunicorn`, `gevent` and `psycopg2`)：  
 ```
 pip install -r requirements.txt
 ```
 
-Comment out this line (app.py):
+Comment out these lines (app.py):
 ```
+import psycopg2
+...
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 ```
 Uncomment this lines (app.py):
 ```
-app.config['SQLALCHEMY_DATABASE_URI'] = \
-  'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'  # use in-memory database
 ```
 
-Initialize database and create two base categories (i.e. inbox and done):
+Then exit python and run the app:
 ```
-python app.py shell
->>> from app import db, Category
->>> db.create_all()
->>> db.session.commit()
->>> inbox = Category(name='Inbox')
->>> done = Category(name='Done')
->>> db.session.add(inbox)
->>> db.session.add(done)
->>> db.session.commit()
-```
-
-Then exit python and run the app use Flask-Script's `runserver` command:
-```
-python app.py runserver
+python app.py
 ```
 
 Now Go to http://127.0.0.1:5000/
