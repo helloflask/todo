@@ -1,0 +1,5 @@
+Flask==0.12.2
+Jinja2==2.8
+Werkzeug==0.11.11
+Flask-SQLAlchemy==2.1
+SQLAlchemy==1.1.4

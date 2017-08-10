@@ -10,37 +10,24 @@ http://task5.herokuapp.com/
 Flask-SQLAlchemy==2.1  
 SQLAlchemy==1.1.4  
 
-
 ## Installation
-First, clone it from github:
+First, clone it from Github:
 ```
-git clone https://github.com/helloflask/todo.git
+$ git clone https://github.com/helloflask/todo.git
+$ cd todo
+```  
+Then use `pip` to install requirements (recommend to use `virtualenv` create a virtual enviroment)：  
 ```
-Change to app directory, use `virtualenv` create and activate virtual enviroment.  
-Then use `pip` to install requirements (you may need to comment out `gunicorn`, `gevent` and `psycopg2`)：  
+$ pip install -r requirements-dev.txt
 ```
-pip install -r requirements.txt
+Run the app:
 ```
-
-Comment out these lines (app.py):
-```
-import psycopg2
-...
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
-```
-Uncomment this lines (app.py):
-```
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'  # use in-memory database
-```
-
-Then exit python and run the app:
-```
-python app.py
+$ python app.py
 ```
 
 Now Go to http://127.0.0.1:5000/
 
-## To do list
+## To do
 - Drag to sort items
 - Edit category
 - Set task's priority

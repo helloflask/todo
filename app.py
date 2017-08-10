@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
-#import psycopg2  # for heroku deploy
+import os
+try:
+    import psycopg2  # for heroku deploy
+except:
+    pass
 
 from flask import Flask, render_template, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a secret string'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'  # use in-memory datebase
-
-# the database address below is for heroku postgres, if you want test it on local, use above address instead.
-#app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite://')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # app.config['DEBUG'] = True
 db = SQLAlchemy(app)
