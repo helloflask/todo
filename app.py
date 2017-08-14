@@ -28,7 +28,8 @@ class Category(db.Model):
     items = db.relationship('Item', backref='category')
 
 
-@app.before_first_request
+# only for local test
+# @app.before_first_request
 def init_db():
     """Insert default categories and demo items.
     """
